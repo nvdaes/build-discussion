@@ -55,7 +55,7 @@ jobs:
         id: test-action
         uses: ./
         with:
-          category-position: ${1}
+          category-position: 1
 
       - name: Print Output
         id: output
