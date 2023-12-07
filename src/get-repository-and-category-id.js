@@ -15,7 +15,7 @@ async function getRepositoryAndCategoryId() {
   const query = `query($owner:String!, $name:String!) {
     repository(owner:$owner, name:$name){
       id
-      discussionCategories(first: categoryPosition){
+      discussionCategories(first: ${categoryPosition}){
         node {
           id
         }
