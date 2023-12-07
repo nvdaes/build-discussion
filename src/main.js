@@ -12,7 +12,8 @@ async function run() {
   const resultWithRepoAndCatId = await getRepositoryAndCategoryId()
   const repoId = resultWithRepoAndCatId.repository.id
   const catIndex = parseInt(core.getInput('category-position'), 10) - 1
-  const catId = resultWithRepoAndCatId.discussionCategories.nodes[catIndex].id
+  const catId =
+    resultWithRepoAndCatId.repository.discussionCategories.nodes[catIndex].id
   const body = core.getInput('body')
   const title = core.getInput('title')
   const token = core.getInput('token')
