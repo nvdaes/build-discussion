@@ -1,18 +1,28 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Build  discussion'
+description: 'Creates a GitHub discussion'
+author: 'Noelia Ruiz Martínez'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+repository:
+    description: 'Repository name with owner. For example, nvdaes/getRepositoryId'
     required: true
-    default: '1000'
+    default: ${{ github.repository }}
+  token:
+    description: 'GitHub token'
+    required: true
+    default: ${{ github.token }}
+  category-position:
+    description: 'Position of the category of the discussion to be created, starting with 1 for the first available category'
+    required: true
+    default: '1'
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  discussion-id:
+    description: 'ID of the created discussion'
+  discussion-url:
+    description: 'URL of the created discussion'
 
 runs:
   using: node20

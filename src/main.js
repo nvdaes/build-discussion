@@ -1,28 +1,46 @@
 const core = require('@actions/core')
-const { wait } = require('./wait')
+const github = require('@actions/github')
+const {
+  getRepositoryAndCategoryId
+} = require('./get-repository-and-category-id')
 
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
-  try {
-    const ms = core.getInput('milliseconds', { required: true })
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    // Fail the workflow run if an error occurs
-    core.setFailed(error.message)
-  }
+  const resultWithRepoAndCatId = await getRepositoryAndCategoryId()
+  const repoId = resultWithRepoAndCatId.repository.id
+  const catIndex = core.getInput('categoryPosition') - 1
+  const catId = resultWithRepoAndCatId.discussionCategories.nodes[catIndex].id
+  const body = core.getInput('body')
+  const title = core.getInput('title')
+  const token = core.getInput('token')
+  const octokit = github.getOctokit(token, {
+    userAgent: 'buildDiscussionVersion1'
+  })
+  const mutation = `mutation {
+    createDiscussion(
+      input: {
+        body: "${body}",
+        title: "${title}",
+		      repositoryId: "${repoId}",
+        categoryId: "${catId}",
+        clientMutationId: "build-discussion version 1"
+      }
+    ) {
+      clientMutationId
+      discussion {
+        id
+        url
+      }
+    }
+    }`
+  const response = await octokit.graphql(mutation)
+  const discussionId = await response.createDiscussion.discussion.id
+  const discussionUrl = await response.createDiscussion.discussion.url
+  core.setOutput('discussion-id', discussionId)
+  core.setOutput('discussion-url', discussionUrl)
 }
 
 module.exports = {
