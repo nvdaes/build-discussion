@@ -28922,7 +28922,7 @@ async function getRepositoryAndCategoryId() {
     userAgent: 'getRepositoryAndCategoryIdVersion1'
   })
   const variables = inputHelper()
-  const categoryPosition = parseInt(core.getInput('category-position'))
+  const categoryPosition = parseInt(`${core.getInput('category-position')}`)
   const query = `query($owner:String!, $name:String!) {
     repository(owner:$owner, name:$name){
       id
@@ -28999,7 +28999,7 @@ const {
 async function run() {
   const resultWithRepoAndCatId = await getRepositoryAndCategoryId()
   const repoId = resultWithRepoAndCatId.repository.id
-  const catIndex = parseInt(core.getInput('categoryPosition')) - 1
+  const catIndex = parseInt(`${core.getInput('categoryPosition')}`) - 1
   const catId = resultWithRepoAndCatId.discussionCategories.nodes[catIndex].id
   const body = core.getInput('body')
   const title = core.getInput('title')
