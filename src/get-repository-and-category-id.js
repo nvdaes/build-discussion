@@ -11,7 +11,7 @@ async function getRepositoryAndCategoryId() {
     userAgent: 'getRepositoryAndCategoryIdVersion1'
   })
   const variables = inputHelper()
-  const categoryPosition = core.getInput('category-position')
+  const categoryPosition = parseInt(core.getInput('category-position'))
   const query = `query($owner:String!, $name:String!) {
     repository(owner:$owner, name:$name){
       id
