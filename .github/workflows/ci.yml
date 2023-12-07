@@ -59,6 +59,10 @@ jobs:
         uses: ./
         with:
           category-position: 1
+          title: Test
+          body: |
+            Hello.
+            This is the discussion body.
 
       - name: Print Output
         id: output

@@ -13,9 +13,17 @@ inputs:
     required: true
     default: ${{ github.token }}
   category-position:
-    description: 'Position of the category of the discussion to be created, starting with 1 for the first available category'
+    description: 'Position of the category for the discussion to be created, starting with 1 for the first available category'
     required: true
     default: '1'
+  title:
+    description: 'Discussion title'
+    required: true
+    default: 'Discussion created with Build discussion action'
+  body:
+    description: 'Discussion body'
+    required: true
+    default: 'This is the discussion body'
 
 # Define your outputs here.
 outputs:
