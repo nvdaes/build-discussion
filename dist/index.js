@@ -28927,7 +28927,7 @@ async function getRepositoryAndCategoryId() {
     repository(owner:$owner, name:$name){
       id
       discussionCategories(first: ${categoryPosition}){
-        node {
+        nodes {
           id
         }
       }
