@@ -20,7 +20,8 @@ async function getRepositoryAndCategoryId() {
           id
         }
       }
-    }`
+    }
+  }`
   const result = await octokit.graphql(query, variables)
   return result
 }
