@@ -11,11 +11,11 @@ async function getRepositoryAndCategoryId() {
     userAgent: 'getRepositoryAndCategoryIdVersion1'
   })
   const variables = inputHelper()
-  const categoryPosition = parseInt(`${core.getInput('category-position')}`)
+  const categoryPosition = parseInt(core.getInput('category-position'), 10)
   const query = `query($owner:String!, $name:String!) {
     repository(owner:$owner, name:$name){
       id
-      discussionCategories(first: ${categoryPosition}){
+      discussionCategories(first: categoryPosition){
         node {
           id
         }
