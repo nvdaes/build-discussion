@@ -53,6 +53,7 @@ jobs:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+        echo "Number: ${{ steps.test-action.outputs.discussion-number }}"
 
       - name: Test Local Action
         id: test-action
@@ -67,5 +68,5 @@ jobs:
       - name: Print Output
         id: output
         run: |
-          echo "${{ steps.test-action.outputs.discussion-id }}"
-          echo "${{ steps.test-action.outputs.discussion-url }}"
+          echo "ID: ${{ steps.test-action.outputs.discussion-id }}"
+          echo "URL: ${{ steps.test-action.outputs.discussion-url }}"

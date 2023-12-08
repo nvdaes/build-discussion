@@ -29022,14 +29022,17 @@ async function run() {
       discussion {
         id
         url
+        number
       }
     }
     }`
   const response = await octokit.graphql(mutation)
   const discussionId = await response.createDiscussion.discussion.id
   const discussionUrl = await response.createDiscussion.discussion.url
+  const discussionNumber = await response.createDiscussion.discussion.number
   core.setOutput('discussion-id', discussionId)
   core.setOutput('discussion-url', discussionUrl)
+  core.setOutput('discussion-number', discussionNumber)
 }
 
 module.exports = {
