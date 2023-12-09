@@ -1,8 +1,8 @@
-# Build Discussion action
+# Build discussion action
 
 This action creates a GitHub discussion.
 
-It's inspired by the [Create GitHub Discussion action](https://github.com/marketplace/actions/create-github-discussion), by @abirismyname.
+It's inspired by the [Create GitHub discussion action](https://github.com/marketplace/actions/create-github-discussion), by @abirismyname.
 
 ## Inputs
 
@@ -12,7 +12,7 @@ The repository where the discussion should be created. Default `${{ github.repos
 
 ### `token`
 
-GitHub token. Defaults `${{ github.token }}`.
+GitHub token. Default `${{ github.token }}`.
 
 ### `category-position`
 
@@ -20,7 +20,7 @@ The position of the category for the discussion, starting with 1 for the first a
 
 ### `title`
 
-Discussion title. Default `Discussion created by nvdaes/build-discussion action`.
+Discussion title. Default `Discussion created with Build discussion action`.
 
 ### `body`
 
@@ -52,7 +52,7 @@ Discussion number.
 	   title: My GitHub discussion
 	   body: |
 	     My body.
-		    Can be multiline
+		    Can be multiline.
 
 - name: Print Output
   id: output
