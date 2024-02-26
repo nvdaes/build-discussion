@@ -48,11 +48,11 @@ Discussion number.
   uses: nvdaes/build-discussion@v1
   with:
     repository: owner/repo
-	   category-position: 1
-	   title: My GitHub discussion
-	   body: |
-	     My body.
-		    Can be multiline.
+    category-position: 1
+    title: My GitHub discussion
+    body: |
+      My body.
+      Can be multiline.
 
 - name: Print Output
   id: output
