@@ -1,46 +1,50 @@
-# Build discussion action #
+# Build discussion action
 
 This action creates a GitHub discussion.
 
-It's inspired by the [Create GitHub discussion action](https://github.com/marketplace/actions/create-github-discussion), by @abirismyname.
+It's inspired by the
+[Create GitHub discussion action](https://github.com/marketplace/actions/create-github-discussion),
+by @abirismyname.
 
-## Inputs ##
+## Inputs
 
-### `repository` ###
+### `repository`
 
-The repository where the discussion should be created. Default `${{ github.repository }}`.
+The repository where the discussion should be created. Default
+`${{ github.repository }}`.
 
-### `token` ###
+### `token`
 
 GitHub token. Default `${{ github.token }}`.
 
-### `category-position` ###
+### `category-position`
 
-The position of the category for the discussion, starting with 1 for the first available category. Default `1`.
+The position of the category for the discussion, starting with 1 for the first
+available category. Default `1`.
 
-### `title` ###
+### `title`
 
 Discussion title. Default `Discussion created with Build discussion action`.
 
-### `body` ###
+### `body`
 
 Discussion body. Default `This is the discussion body`.
 
-## Outputs ##
+## Outputs
 
-### `discussion-id` ###
+### `discussion-id`
 
 Discussion ID.
 
-### `discussion-url` ###
+### `discussion-url`
 
 Discussion URL.
 
-### `discussion-number` ###
+### `discussion-number`
 
 Discussion number.
 
-## Example usage ##
+## Example usage
 
 ```yaml
 - name: Build discussion
