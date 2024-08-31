@@ -5,7 +5,8 @@ author: 'Noelia Ruiz Martínez'
 # Define your inputs here.
 inputs:
   repository:
-    description: 'Repository name with owner. For example, nvdaes/build-discussion'
+    description:
+      'Repository name with owner. For example, nvdaes/build-discussion'
     required: true
     default: ${{ github.repository }}
   token:
@@ -13,7 +14,9 @@ inputs:
     required: true
     default: ${{ github.token }}
   category-position:
-    description: 'Position of the category for the discussion to be created, starting with 1 for the first available category'
+    description:
+      'Position of the category for the discussion to be created, starting with
+      1 for the first available category'
     required: true
     default: '1'
   title:
