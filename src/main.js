@@ -20,13 +20,13 @@ async function run() {
   const octokit = github.getOctokit(token, {
     userAgent: 'buildDiscussionVersion1'
   })
-  const mutation = `mutation {
+  const mutation = `mutation($body: String!, $title: String!, $repoId: ID!, $catId: ID!) {
     createDiscussion(
       input: {
-        body: "${body}",
-        title: "${title}",
-		      repositoryId: "${repoId}",
-        categoryId: "${catId}",
+        body: $body,
+        title: $title,
+        repositoryId: $repoId,
+        categoryId: $catId,
         clientMutationId: "build-discussion version 1"
       }
     ) {
@@ -38,7 +38,12 @@ async function run() {
       }
     }
     }`
-  const response = await octokit.graphql(mutation)
+  const response = await octokit.graphql(mutation, {
+    body,
+    title,
+    repoId,
+    catId
+  })
   const discussionId = await response.createDiscussion.discussion.id
   const discussionUrl = await response.createDiscussion.discussion.url
   const discussionNumber = await response.createDiscussion.discussion.number
