@@ -1,40 +1,53 @@
 /**
  * Unit tests for the action's main functionality, src/main.js
  */
-const core = require('@actions/core')
-const github = require('@actions/github')
-const main = require('../src/main')
+import { jest } from '@jest/globals'
 
-// Mock the GitHub Actions core library
-const infoMock = jest.spyOn(core, 'info').mockImplementation()
-const getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
-const setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
-const setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
+// Mock @actions/core before any dynamic imports
+jest.unstable_mockModule('@actions/core', () => ({
+  info: jest.fn(),
+  getInput: jest.fn(),
+  setFailed: jest.fn(),
+  setOutput: jest.fn(),
+  debug: jest.fn()
+}))
 
-// Mock the action's main function
-const runMock = jest.spyOn(main, 'run').mockImplementation(id => {
-  if (!id) {
-    core.setFailed('ID is undefined')
-  }
-  core.setOutput('repoId', `${id}`)
-})
+// Mock the action's main module
+jest.unstable_mockModule('../src/main.js', () => ({
+  run: jest.fn()
+}))
+
+// Dynamic imports after mock setup
+const core = await import('@actions/core')
+const main = await import('../src/main.js')
+
+/** Sets expected mock behavior for run */
+function setupRunMock() {
+  main.run.mockImplementation(id => {
+    if (!id) {
+      core.setFailed('ID is undefined')
+    }
+    core.setOutput('repoId', `${id}`)
+  })
+}
+
+setupRunMock()
 
 describe('action', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    setupRunMock()
   })
 
   it('sets the repoId output', async () => {
-    // Mock the action's inputs
     await main.run('some-id')
-    expect(runMock).toHaveReturned()
-    expect(setOutputMock).toHaveBeenCalledWith('repoId', expect.any(String))
+    expect(main.run).toHaveReturned()
+    expect(core.setOutput).toHaveBeenCalledWith('repoId', expect.any(String))
   })
 
   it('fails setting the repoId', async () => {
-    // Mock the action's inputs
     await main.run(undefined)
-    expect(runMock).toHaveReturned()
-    expect(setFailedMock).toHaveBeenCalledWith(expect.any(String))
+    expect(main.run).toHaveReturned()
+    expect(core.setFailed).toHaveBeenCalledWith(expect.any(String))
   })
 })

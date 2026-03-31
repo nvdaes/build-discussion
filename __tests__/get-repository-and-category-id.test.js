@@ -1,19 +1,27 @@
 /**
  * Unit tests for src/get-repository-and-category-id.js
  */
-const github = require('@actions/github')
-const getRepositoryAndCategoryId = require('../src/get-repository-and-category-id')
+import { jest } from '@jest/globals'
+
+// Mock the module before any dynamic imports
+jest.unstable_mockModule('../src/get-repository-and-category-id.js', () => ({
+  getRepositoryAndCategoryId: jest.fn()
+}))
+
+const github = await import('@actions/github')
+const getRepositoryAndCategoryId =
+  await import('../src/get-repository-and-category-id.js')
 
 describe('getRepositoryAndCategoryId tests', () => {
   beforeAll(() => {
     // Mock getRepositoryAndCategoryId
-    jest
-      .spyOn(getRepositoryAndCategoryId, 'getRepositoryAndCategoryId')
-      .mockImplementation(() => {
+    getRepositoryAndCategoryId.getRepositoryAndCategoryId.mockImplementation(
+      () => {
         const gh = github.getOctokit('_')
         jest.spyOn(gh, 'graphql')
         return { repoId: 'some-repo-id', catId: 'some-cat-id' }
-      })
+      }
+    )
   })
 
   afterAll(() => {

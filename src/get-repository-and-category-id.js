@@ -1,9 +1,9 @@
 /**
  * Function to get the ID of the specified repo and discussion category
  */
-const core = require('@actions/core')
-const github = require('@actions/github')
-const { inputHelper } = require('./input-helper')
+import * as core from '@actions/core'
+import * as github from '@actions/github'
+import { inputHelper } from './input-helper.js'
 
 async function getRepositoryAndCategoryId() {
   const token = core.getInput('token')
@@ -26,6 +26,4 @@ async function getRepositoryAndCategoryId() {
   return result
 }
 
-module.exports = {
-  getRepositoryAndCategoryId
-}
+export { getRepositoryAndCategoryId }

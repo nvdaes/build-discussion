@@ -1,25 +1,27 @@
 /**
  * Unit tests for src/input-helper.js
  */
-const core = require('@actions/core')
-const github = require('@actions/github')
-const { inputHelper } = require('../src/input-helper')
+import { jest } from '@jest/globals'
 
-// Inputs for mock @actions/core
 let inputs = {}
+
+// Mock @actions/core before any dynamic imports
+jest.unstable_mockModule('@actions/core', () => ({
+  getInput: jest.fn(name => inputs[name]),
+  error: jest.fn(),
+  warning: jest.fn(),
+  info: jest.fn(),
+  debug: jest.fn(),
+  setFailed: jest.fn()
+}))
+
+// Dynamic imports after mock setup
+const core = await import('@actions/core')
+const github = await import('@actions/github')
+const { inputHelper } = await import('../src/input-helper.js')
 
 describe('input-helper tests', () => {
   beforeAll(() => {
-    // Mock getInput
-    jest.spyOn(core, 'getInput').mockImplementation(name => {
-      return inputs[name]
-    })
-
-    // Mock error/warning/info/debug
-    jest.spyOn(core, 'error').mockImplementation(jest.fn())
-    jest.spyOn(core, 'warning').mockImplementation(jest.fn())
-    jest.spyOn(core, 'info').mockImplementation(jest.fn())
-    jest.spyOn(core, 'debug').mockImplementation(jest.fn())
     // Mock github context
     jest.spyOn(github.context, 'repo', 'get').mockImplementation(() => {
       return {
@@ -48,12 +50,8 @@ describe('input-helper tests', () => {
 
   it('requires qualified repo', async () => {
     inputs.repository = 'some-unqualified-repo'
-    // Mock setFailed
-    const setFailedMock = jest
-      .spyOn(core, 'setFailed')
-      .mockImplementation(jest.fn())
     await inputHelper()
-    expect(setFailedMock).toHaveBeenCalled()
+    expect(core.setFailed).toHaveBeenCalled()
     expect.assertions(1)
   })
 })

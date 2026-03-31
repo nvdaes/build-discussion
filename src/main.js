@@ -1,8 +1,6 @@
-const core = require('@actions/core')
-const github = require('@actions/github')
-const {
-  getRepositoryAndCategoryId
-} = require('./get-repository-and-category-id')
+import * as core from '@actions/core'
+import * as github from '@actions/github'
+import { getRepositoryAndCategoryId } from './get-repository-and-category-id.js'
 
 /**
  * The main function for the action.
@@ -52,6 +50,4 @@ async function run() {
   core.setOutput('discussion-number', discussionNumber)
 }
 
-module.exports = {
-  run
-}
+export { run }

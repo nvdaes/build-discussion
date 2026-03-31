@@ -1,8 +1,8 @@
 /**
  * Function to get input
  */
-const core = require('@actions/core')
-const github = require('@actions/github')
+import * as core from '@actions/core'
+import * as github from '@actions/github'
 
 function inputHelper() {
   // Qualified repository
@@ -27,6 +27,4 @@ function inputHelper() {
   return variables
 }
 
-module.exports = {
-  inputHelper
-}
+export { inputHelper }
