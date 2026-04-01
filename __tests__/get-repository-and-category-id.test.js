@@ -3,35 +3,73 @@
  */
 import { jest } from '@jest/globals'
 
-// Mock the module before any dynamic imports
-jest.unstable_mockModule('../src/get-repository-and-category-id.js', () => ({
-  getRepositoryAndCategoryId: jest.fn()
+// Mock @actions/core
+jest.unstable_mockModule('@actions/core', () => ({
+  getInput: jest.fn()
 }))
 
+// Mock @actions/github
+jest.unstable_mockModule('@actions/github', () => ({
+  getOctokit: jest.fn()
+}))
+
+// Mock input-helper
+jest.unstable_mockModule('../src/input-helper.js', () => ({
+  inputHelper: jest.fn()
+}))
+
+const core = await import('@actions/core')
 const github = await import('@actions/github')
-const getRepositoryAndCategoryId =
+const { inputHelper } = await import('../src/input-helper.js')
+const { getRepositoryAndCategoryId } =
   await import('../src/get-repository-and-category-id.js')
 
 describe('getRepositoryAndCategoryId tests', () => {
-  beforeAll(() => {
-    // Mock getRepositoryAndCategoryId
-    getRepositoryAndCategoryId.getRepositoryAndCategoryId.mockImplementation(
-      () => {
-        const gh = github.getOctokit('_')
-        jest.spyOn(gh, 'graphql')
-        return { repoId: 'some-repo-id', catId: 'some-cat-id' }
-      }
-    )
-  })
-
-  afterAll(() => {
-    // Restore.mockImplementation(jest.fn())
-    jest.restoreAllMocks()
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
   it('gets repo and cat id', async () => {
-    const result = await getRepositoryAndCategoryId.getRepositoryAndCategoryId()
-    expect(result.repoId).toBe('some-repo-id')
-    expect(result.catId).toBe('some-cat-id')
+    // Setup mocks
+    core.getInput.mockImplementation(input => {
+      if (input === 'token') return 'test-token'
+      if (input === 'category-position') return '2'
+      return ''
+    })
+
+    inputHelper.mockReturnValue({
+      owner: 'test-owner',
+      name: 'test-repo'
+    })
+
+    const mockGraphql = jest.fn().mockResolvedValue({
+      repository: {
+        id: 'repo-id-123',
+        discussionCategories: {
+          nodes: [{ id: 'cat-id-1' }, { id: 'cat-id-2' }]
+        }
+      }
+    })
+
+    github.getOctokit.mockReturnValue({
+      graphql: mockGraphql
+    })
+
+    // Execute
+    const result = await getRepositoryAndCategoryId()
+
+    // Verify
+    expect(github.getOctokit).toHaveBeenCalledWith('test-token', {
+      userAgent: 'getRepositoryAndCategoryIdVersion1'
+    })
+    expect(inputHelper).toHaveBeenCalled()
+    expect(core.getInput).toHaveBeenCalledWith('token')
+    expect(core.getInput).toHaveBeenCalledWith('category-position')
+    expect(mockGraphql).toHaveBeenCalledWith(
+      expect.stringContaining('query($owner:String!, $name:String!)'),
+      { owner: 'test-owner', name: 'test-repo' }
+    )
+    expect(result.repository.id).toBe('repo-id-123')
+    expect(result.repository.discussionCategories.nodes).toHaveLength(2)
   })
 })
