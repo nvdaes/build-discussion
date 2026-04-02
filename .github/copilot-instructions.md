@@ -1,4 +1,4 @@
-# Copilot Instructions
+ Copilot Instructions
 
 This GitHub Action is a **composite action** that uses the GitHub CLI (`gh`) to
 interact with the GitHub GraphQL API. The action consists of:
@@ -37,24 +37,24 @@ The action implementation is split between two files:
 
 1. **action.yml**: Defines the composite action metadata, inputs, outputs, and
    steps
-2. **scripts/create-discussion.sh**: Contains the shell script logic for
+1. **scripts/create-discussion.sh**: Contains the shell script logic for
    creating discussions
 
 When developing:
 
 1. Edit `action.yml` to modify inputs, outputs, or step configuration
-2. Edit `scripts/create-discussion.sh` to modify the implementation logic
-3. Test the action in a workflow (see Testing section)
-4. No bundling or compilation required
+1. Edit `scripts/create-discussion.sh` to modify the implementation logic
+1. Test the action in a workflow (see Testing section)
+1. No bundling or compilation required
 
 ## Testing
 
 For testing the composite action:
 
 1. Create or use an existing test workflow in `.github/workflows/`
-2. Use the action with various inputs to verify functionality
-3. Check workflow run logs for proper output and error handling
-4. Verify the action works with different repositories and categories
+1. Use the action with various inputs to verify functionality
+1. Check workflow run logs for proper output and error handling
+1. Verify the action works with different repositories and categories
 
 ## General Coding Guidelines
 
