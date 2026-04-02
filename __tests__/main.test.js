@@ -116,4 +116,38 @@ describe('action', () => {
       })
     )
   })
+
+  it('throws error when category position is out of bounds (too high)', async () => {
+    // Setup mocks with category-position 5 but only 2 categories available
+    const highPositionInputs = { ...validInputs, 'category-position': '5' }
+    core.getInput.mockImplementation(createGetInputMock(highPositionInputs))
+    getRepositoryAndCategoryId.mockResolvedValue(repositoryWithCategories)
+
+    const mockGraphql = jest.fn()
+    github.getOctokit.mockReturnValue({
+      graphql: mockGraphql
+    })
+
+    // Execute and expect error
+    await expect(run()).rejects.toThrow(
+      'Category position 5 is out of bounds. Available categories: 2'
+    )
+  })
+
+  it('throws error when category position is out of bounds (negative)', async () => {
+    // Setup mocks with category-position 0 (becomes -1 after subtracting 1)
+    const zeroPositionInputs = { ...validInputs, 'category-position': '0' }
+    core.getInput.mockImplementation(createGetInputMock(zeroPositionInputs))
+    getRepositoryAndCategoryId.mockResolvedValue(repositoryWithCategories)
+
+    const mockGraphql = jest.fn()
+    github.getOctokit.mockReturnValue({
+      graphql: mockGraphql
+    })
+
+    // Execute and expect error
+    await expect(run()).rejects.toThrow(
+      'Category position 0 is out of bounds. Available categories: 2'
+    )
+  })
 })

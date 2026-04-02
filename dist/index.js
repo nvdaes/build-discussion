@@ -33063,17 +33063,28 @@ async function getRepositoryAndCategoryId() {
   });
   const variables = inputHelper();
   const categoryPosition = parseInt(getInput('category-position'), 10);
-  const query = `query($owner:String!, $name:String!) {
+
+  // Validate category position
+  if (isNaN(categoryPosition) || categoryPosition < 1) {
+    throw new Error(
+      `Invalid category-position '${getInput('category-position')}'. Must be a positive integer.`
+    )
+  }
+
+  const query = `query($owner:String!, $name:String!, $first:Int!) {
     repository(owner:$owner, name:$name){
       id
-      discussionCategories(first: ${categoryPosition}){
+      discussionCategories(first: $first){
         nodes {
           id
         }
       }
     }
   }`;
-  const result = await octokit.graphql(query, variables);
+  const result = await octokit.graphql(query, {
+    ...variables,
+    first: categoryPosition
+  });
   return result
 }
 
@@ -33085,8 +33096,17 @@ async function run() {
   const resultWithRepoAndCatId = await getRepositoryAndCategoryId();
   const repoId = resultWithRepoAndCatId.repository.id;
   const catIndex = parseInt(getInput('category-position'), 10) - 1;
-  const catId =
-    resultWithRepoAndCatId.repository.discussionCategories.nodes[catIndex].id;
+
+  // Validate array bounds
+  const categories =
+    resultWithRepoAndCatId.repository.discussionCategories.nodes;
+  if (catIndex < 0 || catIndex >= categories.length) {
+    throw new Error(
+      `Category position ${catIndex + 1} is out of bounds. Available categories: ${categories.length}`
+    )
+  }
+
+  const catId = categories[catIndex].id;
   const body = getInput('body');
   const title = getInput('title');
   const token = getInput('token');

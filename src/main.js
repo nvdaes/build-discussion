@@ -10,8 +10,17 @@ async function run() {
   const resultWithRepoAndCatId = await getRepositoryAndCategoryId()
   const repoId = resultWithRepoAndCatId.repository.id
   const catIndex = parseInt(core.getInput('category-position'), 10) - 1
-  const catId =
-    resultWithRepoAndCatId.repository.discussionCategories.nodes[catIndex].id
+
+  // Validate array bounds
+  const categories =
+    resultWithRepoAndCatId.repository.discussionCategories.nodes
+  if (catIndex < 0 || catIndex >= categories.length) {
+    throw new Error(
+      `Category position ${catIndex + 1} is out of bounds. Available categories: ${categories.length}`
+    )
+  }
+
+  const catId = categories[catIndex].id
   const body = core.getInput('body')
   const title = core.getInput('title')
   const token = core.getInput('token')

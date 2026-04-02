@@ -60,10 +60,63 @@ describe('getRepositoryAndCategoryId tests', () => {
     expect(core.getInput).toHaveBeenCalledWith('token')
     expect(core.getInput).toHaveBeenCalledWith('category-position')
     expect(mockGraphql).toHaveBeenCalledWith(
-      expect.stringContaining('query($owner:String!, $name:String!)'),
-      { owner: 'test-owner', name: 'test-repo' }
+      expect.stringContaining(
+        'query($owner:String!, $name:String!, $first:Int!)'
+      ),
+      { owner: 'test-owner', name: 'test-repo', first: 2 }
     )
     expect(result.repository.id).toBe('repo-id-123')
     expect(result.repository.discussionCategories.nodes).toHaveLength(2)
+  })
+
+  it('throws error for invalid category position (NaN)', async () => {
+    core.getInput.mockImplementation(input => {
+      if (input === 'token') return 'test-token'
+      if (input === 'category-position') return 'invalid'
+      return ''
+    })
+
+    inputHelper.mockReturnValue({
+      owner: 'test-owner',
+      name: 'test-repo'
+    })
+
+    await expect(getRepositoryAndCategoryId()).rejects.toThrow(
+      "Invalid category-position 'invalid'. Must be a positive integer."
+    )
+  })
+
+  it('throws error for negative category position', async () => {
+    core.getInput.mockImplementation(input => {
+      if (input === 'token') return 'test-token'
+      if (input === 'category-position') return '-1'
+      return ''
+    })
+
+    inputHelper.mockReturnValue({
+      owner: 'test-owner',
+      name: 'test-repo'
+    })
+
+    await expect(getRepositoryAndCategoryId()).rejects.toThrow(
+      "Invalid category-position '-1'. Must be a positive integer."
+    )
+  })
+
+  it('throws error for zero category position', async () => {
+    core.getInput.mockImplementation(input => {
+      if (input === 'token') return 'test-token'
+      if (input === 'category-position') return '0'
+      return ''
+    })
+
+    inputHelper.mockReturnValue({
+      owner: 'test-owner',
+      name: 'test-repo'
+    })
+
+    await expect(getRepositoryAndCategoryId()).rejects.toThrow(
+      "Invalid category-position '0'. Must be a positive integer."
+    )
   })
 })
