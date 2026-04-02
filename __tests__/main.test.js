@@ -75,7 +75,8 @@ describe('action', () => {
         body: validInputs.body,
         title: validInputs.title,
         repoId: repositoryWithCategories.repository.id,
-        catId: repositoryWithCategories.repository.discussionCategories.nodes[1].id
+        catId:
+          repositoryWithCategories.repository.discussionCategories.nodes[1].id
       }
     )
     expect(core.setOutput).toHaveBeenCalledWith(
@@ -109,7 +110,9 @@ describe('action', () => {
     expect(mockGraphql).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        catId: repositoryWithManyCategories.repository.discussionCategories.nodes[0].id
+        catId:
+          repositoryWithManyCategories.repository.discussionCategories.nodes[0]
+            .id
       })
     )
   })
