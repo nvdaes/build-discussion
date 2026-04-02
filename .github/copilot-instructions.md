@@ -45,8 +45,8 @@ Since this is a composite action using shell scripts, development is
 straightforward:
 
 1. Edit the `action.yml` file directly
-2. Test the action in a workflow
-3. No bundling or compilation required
+1. Test the action in a workflow
+1. No bundling or compilation required
 
 ## Testing
 
