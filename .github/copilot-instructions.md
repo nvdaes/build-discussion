@@ -1,4 +1,4 @@
- Copilot Instructions
+ # Copilot Instructions
 
 This GitHub Action is a **composite action** that uses the GitHub CLI (`gh`) to
 interact with the GitHub GraphQL API. The action consists of:
