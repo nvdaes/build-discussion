@@ -33137,9 +33137,9 @@ async function run() {
     repoId,
     catId
   });
-  const discussionId = await response.createDiscussion.discussion.id;
-  const discussionUrl = await response.createDiscussion.discussion.url;
-  const discussionNumber = await response.createDiscussion.discussion.number;
+  const discussionId = response.createDiscussion.discussion.id;
+  const discussionUrl = response.createDiscussion.discussion.url;
+  const discussionNumber = response.createDiscussion.discussion.number;
   setOutput('discussion-id', discussionId);
   setOutput('discussion-url', discussionUrl);
   setOutput('discussion-number', discussionNumber);

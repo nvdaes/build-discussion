@@ -51,9 +51,9 @@ async function run() {
     repoId,
     catId
   })
-  const discussionId = await response.createDiscussion.discussion.id
-  const discussionUrl = await response.createDiscussion.discussion.url
-  const discussionNumber = await response.createDiscussion.discussion.number
+  const discussionId = response.createDiscussion.discussion.id
+  const discussionUrl = response.createDiscussion.discussion.url
+  const discussionNumber = response.createDiscussion.discussion.number
   core.setOutput('discussion-id', discussionId)
   core.setOutput('discussion-url', discussionUrl)
   core.setOutput('discussion-number', discussionNumber)
