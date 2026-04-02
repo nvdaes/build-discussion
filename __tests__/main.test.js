@@ -2,6 +2,19 @@
  * Unit tests for the action's main functionality, src/main.js
  */
 import { jest } from '@jest/globals'
+import {
+  validInputs,
+  minimalInputs,
+  createGetInputMock
+} from '../__fixtures__/action-inputs.js'
+import {
+  repositoryWithCategories,
+  repositoryWithManyCategories
+} from '../__fixtures__/repository-responses.js'
+import {
+  createDiscussionSuccess,
+  createDiscussionMinimal
+} from '../__fixtures__/discussion-responses.js'
 
 // Mock @actions/core before any dynamic imports
 jest.unstable_mockModule('@actions/core', () => ({
@@ -36,34 +49,10 @@ describe('action', () => {
 
   it('sets the discussion outputs successfully', async () => {
     // Setup mocks
-    core.getInput.mockImplementation(input => {
-      if (input === 'category-position') return '2'
-      if (input === 'body') return 'Test discussion body'
-      if (input === 'title') return 'Test Discussion Title'
-      if (input === 'token') return 'test-token'
-      return ''
-    })
+    core.getInput.mockImplementation(createGetInputMock(validInputs))
+    getRepositoryAndCategoryId.mockResolvedValue(repositoryWithCategories)
 
-    getRepositoryAndCategoryId.mockResolvedValue({
-      repository: {
-        id: 'repo-id-123',
-        discussionCategories: {
-          nodes: [{ id: 'cat-id-1' }, { id: 'cat-id-2' }]
-        }
-      }
-    })
-
-    const mockGraphql = jest.fn().mockResolvedValue({
-      createDiscussion: {
-        clientMutationId: 'build-discussion version 1',
-        discussion: {
-          id: 'discussion-id-456',
-          url: 'https://github.com/test/repo/discussions/1',
-          number: 1
-        }
-      }
-    })
-
+    const mockGraphql = jest.fn().mockResolvedValue(createDiscussionSuccess)
     github.getOctokit.mockReturnValue({
       graphql: mockGraphql
     })
@@ -77,62 +66,38 @@ describe('action', () => {
     expect(core.getInput).toHaveBeenCalledWith('body')
     expect(core.getInput).toHaveBeenCalledWith('title')
     expect(core.getInput).toHaveBeenCalledWith('token')
-    expect(github.getOctokit).toHaveBeenCalledWith('test-token', {
+    expect(github.getOctokit).toHaveBeenCalledWith(validInputs.token, {
       userAgent: 'buildDiscussionVersion1'
     })
     expect(mockGraphql).toHaveBeenCalledWith(
       expect.stringContaining('createDiscussion'),
       {
-        body: 'Test discussion body',
-        title: 'Test Discussion Title',
-        repoId: 'repo-id-123',
-        catId: 'cat-id-2'
+        body: validInputs.body,
+        title: validInputs.title,
+        repoId: repositoryWithCategories.repository.id,
+        catId: repositoryWithCategories.repository.discussionCategories.nodes[1].id
       }
     )
     expect(core.setOutput).toHaveBeenCalledWith(
       'discussion-id',
-      'discussion-id-456'
+      createDiscussionSuccess.createDiscussion.discussion.id
     )
     expect(core.setOutput).toHaveBeenCalledWith(
       'discussion-url',
-      'https://github.com/test/repo/discussions/1'
+      createDiscussionSuccess.createDiscussion.discussion.url
     )
-    expect(core.setOutput).toHaveBeenCalledWith('discussion-number', 1)
+    expect(core.setOutput).toHaveBeenCalledWith(
+      'discussion-number',
+      createDiscussionSuccess.createDiscussion.discussion.number
+    )
   })
 
   it('uses correct category index', async () => {
     // Setup mocks for testing the category indexing
-    core.getInput.mockImplementation(input => {
-      if (input === 'category-position') return '1'
-      if (input === 'body') return 'Body'
-      if (input === 'title') return 'Title'
-      if (input === 'token') return 'token'
-      return ''
-    })
+    core.getInput.mockImplementation(createGetInputMock(minimalInputs))
+    getRepositoryAndCategoryId.mockResolvedValue(repositoryWithManyCategories)
 
-    getRepositoryAndCategoryId.mockResolvedValue({
-      repository: {
-        id: 'repo-id',
-        discussionCategories: {
-          nodes: [
-            { id: 'first-cat-id' },
-            { id: 'second-cat-id' },
-            { id: 'third-cat-id' }
-          ]
-        }
-      }
-    })
-
-    const mockGraphql = jest.fn().mockResolvedValue({
-      createDiscussion: {
-        discussion: {
-          id: 'disc-id',
-          url: 'url',
-          number: 1
-        }
-      }
-    })
-
+    const mockGraphql = jest.fn().mockResolvedValue(createDiscussionMinimal)
     github.getOctokit.mockReturnValue({
       graphql: mockGraphql
     })
@@ -144,7 +109,7 @@ describe('action', () => {
     expect(mockGraphql).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        catId: 'first-cat-id'
+        catId: repositoryWithManyCategories.repository.discussionCategories.nodes[0].id
       })
     )
   })
