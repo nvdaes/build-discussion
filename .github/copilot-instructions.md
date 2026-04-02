@@ -5,8 +5,11 @@ interact with the GitHub GraphQL API. The action logic is contained entirely in
 the `action.yml` file as shell scripts, requiring no JavaScript bundling or
 compilation steps.
 
-The `main` branch contains the JavaScript implementation, while the `cli` branch
-(current) contains the GitHub CLI implementation.
+## Version History
+
+The repository has been migrated from a JavaScript/Node.js implementation (v1)
+to a GitHub CLI composite action (v2). Legacy files from the JavaScript version
+are retained for reference but are not used in the current implementation.
 
 ## Repository Structure
 
@@ -73,10 +76,12 @@ are retained from the previous implementation.
 
 ### Versioning
 
-GitHub Actions are versioned using branch and tag names. Please ensure the
-version in the project's `package.json` is updated to reflect the changes made
-in the codebase. The version should follow
+GitHub Actions are versioned using Git tags. Version 2.x represents the current
+composite action implementation. All versions should follow
 [Semantic Versioning](https://semver.org/) principles.
+
+Note: The `package.json` file is a legacy artifact from v1 and is no longer
+used in the composite action implementation.
 
 ## Pull Request Guidelines
 
