@@ -2,6 +2,7 @@
  * Unit tests for src/get-repository-and-category-id.js
  */
 import { jest } from '@jest/globals'
+import { repositoryWithCategories } from '../__fixtures__/repository-responses.js'
 
 // Mock @actions/core
 jest.unstable_mockModule('@actions/core', () => ({
@@ -42,14 +43,7 @@ describe('getRepositoryAndCategoryId tests', () => {
       name: 'test-repo'
     })
 
-    const mockGraphql = jest.fn().mockResolvedValue({
-      repository: {
-        id: 'repo-id-123',
-        discussionCategories: {
-          nodes: [{ id: 'cat-id-1' }, { id: 'cat-id-2' }]
-        }
-      }
-    })
+    const mockGraphql = jest.fn().mockResolvedValue(repositoryWithCategories)
 
     github.getOctokit.mockReturnValue({
       graphql: mockGraphql
