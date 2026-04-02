@@ -34,7 +34,7 @@ jobs:
           title: Test Discussion from CLI Action
           body: |
             Hello from the GitHub CLI composite action!
-            
+
             This discussion was created using the gh CLI implementation
             instead of the JavaScript version.
 

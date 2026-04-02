@@ -34,7 +34,7 @@ if ! [[ "$CATEGORY_POSITION" =~ ^[0-9]+$ ]] || [ "$CATEGORY_POSITION" -lt 1 ]; t
 fi
 
 # Parse repository owner and name
-IFS='/' read -r OWNER NAME <<< "$REPOSITORY"
+IFS='/' read -r OWNER NAME <<<"$REPOSITORY"
 if [ -z "$OWNER" ] || [ -z "$NAME" ]; then
   echo "::error::Invalid repository format '$REPOSITORY'. Expected format: owner/name"
   exit 1
@@ -77,7 +77,7 @@ repo_data=$(gh api graphql \
 }
 
 # Check for GraphQL errors
-if echo "$repo_data" | jq -e '.errors' > /dev/null 2>&1; then
+if echo "$repo_data" | jq -e '.errors' >/dev/null 2>&1; then
   error_msg=$(echo "$repo_data" | jq -r '.errors[0].message')
   echo "::error::GraphQL error: $error_msg"
   exit 1
@@ -156,7 +156,7 @@ discussion_data=$(gh api graphql \
 }
 
 # Check for GraphQL errors
-if echo "$discussion_data" | jq -e '.errors' > /dev/null 2>&1; then
+if echo "$discussion_data" | jq -e '.errors' >/dev/null 2>&1; then
   error_msg=$(echo "$discussion_data" | jq -r '.errors[0].message')
   echo "::error::GraphQL error: $error_msg"
   exit 1
@@ -189,9 +189,9 @@ discussion_id_clean="${discussion_id//$'\n'/}"
 discussion_url_clean="${discussion_url//$'\n'/}"
 discussion_number_clean="${discussion_number//$'\n'/}"
 
-echo "discussion-id=$discussion_id_clean" >> "$GITHUB_OUTPUT"
-echo "discussion-url=$discussion_url_clean" >> "$GITHUB_OUTPUT"
-echo "discussion-number=$discussion_number_clean" >> "$GITHUB_OUTPUT"
+echo "discussion-id=$discussion_id_clean" >>"$GITHUB_OUTPUT"
+echo "discussion-url=$discussion_url_clean" >>"$GITHUB_OUTPUT"
+echo "discussion-number=$discussion_number_clean" >>"$GITHUB_OUTPUT"
 
 echo "::notice::Discussion created successfully: ${discussion_url_clean}"
 echo "Discussion #${discussion_number_clean} created: ${discussion_url_clean}"
