@@ -53,6 +53,7 @@ echo "::debug::Category position: ${CATEGORY_POSITION}"
 CATEGORY_INDEX=$((CATEGORY_POSITION - 1))
 
 # Query to get repository ID and discussion categories
+# shellcheck disable=SC2016
 REPO_QUERY='
 query($owner: String!, $name: String!, $first: Int!) {
   repository(owner: $owner, name: $name) {
@@ -124,6 +125,7 @@ fi
 echo "::debug::Using category: ${cat_name} (ID: ${cat_id})"
 
 # Mutation to create discussion
+# shellcheck disable=SC2016
 CREATE_MUTATION='
 mutation($body: String!, $title: String!, $repoId: ID!, $catId: ID!) {
   createDiscussion(
@@ -189,9 +191,11 @@ discussion_id_clean="${discussion_id//$'\n'/}"
 discussion_url_clean="${discussion_url//$'\n'/}"
 discussion_number_clean="${discussion_number//$'\n'/}"
 
-echo "discussion-id=$discussion_id_clean" >>"$GITHUB_OUTPUT"
-echo "discussion-url=$discussion_url_clean" >>"$GITHUB_OUTPUT"
-echo "discussion-number=$discussion_number_clean" >>"$GITHUB_OUTPUT"
+{
+  echo "discussion-id=$discussion_id_clean"
+  echo "discussion-url=$discussion_url_clean"
+  echo "discussion-number=$discussion_number_clean"
+} >>"$GITHUB_OUTPUT"
 
 echo "::notice::Discussion created successfully: ${discussion_url_clean}"
 echo "Discussion #${discussion_number_clean} created: ${discussion_url_clean}"
