@@ -1,94 +1,75 @@
 # Copilot Instructions
 
-This GitHub Action is written in JavaScript and transpiled to a single file.
-Both the JavaScript sources and the **generated** JavaScript code are contained
-in this repository. The JavaScript sources are contained in the `src` directory
-and the code invoked by GitHub Actions is contained in the `dist` directory. A
-GitHub Actions workflow checks that the JavaScript code in `dist` is up-to-date.
-Therefore, you should not review any changes to the contents of the `dist`
-folder and it is expected that the JavaScript code in `dist` closely mirrors the
-code it is generated from.
+This GitHub Action is a **composite action** that uses the GitHub CLI (`gh`) to
+interact with the GitHub GraphQL API. The action logic is contained entirely in
+the `action.yml` file as shell scripts, requiring no JavaScript bundling or
+compilation steps.
+
+The `main` branch contains the JavaScript implementation, while the `cli` branch
+(current) contains the GitHub CLI implementation.
 
 ## Repository Structure
 
-| Path                 | Description                                              |
-| -------------------- | -------------------------------------------------------- |
-| `__fixtures__/`      | Unit Test Fixtures                                       |
-| `__tests__/`         | Unit Tests                                               |
-| `.devcontainer/`     | Development Container Configuration                      |
-| `.github/`           | GitHub Configuration                                     |
-| `.licenses/`         | License Information                                      |
-| `.vscode/`           | Visual Studio Code Configuration                         |
-| `badges/`            | Badges for readme                                        |
-| `dist/`              | Generated JavaScript Code                                |
-| `src/`               | JavaScript Source Code                                   |
-| `.env.example`       | Environment Variables Example for `@github/local-action` |
-| `.licensed.yml`      | Licensed Configuration                                   |
-| `.markdown-lint.yml` | Markdown Linter Configuration                            |
-| `.node-version`      | Node.js Version Configuration                            |
-| `.prettierrc.yml`    | Prettier Formatter Configuration                         |
-| `.yaml-lint.yml`     | YAML Linter Configuration                                |
-| `action.yml`         | GitHub Action Metadata                                   |
-| `CODEOWNERS`         | Code Owners File                                         |
-| `eslint.config.mjs`  | ESLint Configuration                                     |
-| `jest.config.js`     | Jest Configuration                                       |
-| `LICENSE`            | License File                                             |
-| `package.json`       | NPM Package Configuration                                |
-| `README.md`          | Project Documentation                                    |
-| `rollup.config.js`   | Rollup Bundler Configuration                             |
+| Path                 | Description                                        |
+| -------------------- | -------------------------------------------------- |
+| `__fixtures__/`      | Unit Test Fixtures (from JavaScript version)      |
+| `__tests__/`         | Unit Tests (from JavaScript version)              |
+| `.devcontainer/`     | Development Container Configuration                |
+| `.github/`           | GitHub Configuration                               |
+| `.licenses/`         | License Information                                |
+| `.vscode/`           | Visual Studio Code Configuration                   |
+| `badges/`            | Badges for readme                                  |
+| `dist/`              | Generated JavaScript Code (from JavaScript version)|
+| `src/`               | JavaScript Source Code (from JavaScript version)   |
+| `.env.example`       | Environment Variables Example                      |
+| `.licensed.yml`      | Licensed Configuration                             |
+| `.markdown-lint.yml` | Markdown Linter Configuration                      |
+| `.node-version`      | Node.js Version Configuration                      |
+| `.prettierrc.yml`    | Prettier Formatter Configuration                   |
+| `.yaml-lint.yml`     | YAML Linter Configuration                          |
+| `action.yml`         | GitHub Action Metadata and Implementation          |
+| `CODEOWNERS`         | Code Owners File                                   |
+| `eslint.config.mjs`  | ESLint Configuration (from JavaScript version)     |
+| `jest.config.js`     | Jest Configuration (from JavaScript version)       |
+| `LICENSE`            | License File                                       |
+| `package.json`       | NPM Package Configuration (from JavaScript version)|
+| `README.md`          | Project Documentation                              |
+| `rollup.config.js`   | Rollup Bundler Configuration (from JavaScript version)|
 
-## Environment Setup
+**Note:** Files marked "from JavaScript version" are retained for reference but
+are not used in the composite action implementation.
 
-Install dependencies by running:
+## Development
 
-```bash
-npm install
-```
+Since this is a composite action using shell scripts, development is
+straightforward:
+
+1. Edit the `action.yml` file directly
+2. Test the action in a workflow
+3. No bundling or compilation required
 
 ## Testing
 
-Ensure all unit tests pass by running:
-
-```bash
-npm run test
-```
-
-Unit tests should exist in the `__tests__` directory. They are powered by
-`jest`. Fixtures should be placed in the `__fixtures__` directory.
-
-## Bundling
-
-Any time files in the `src` directory are changed, you should run the following
-command to bundle the JavaScript code into the `dist` directory:
-
-```bash
-npm run bundle
-```
+For testing the composite action, create a test workflow in `.github/workflows/`
+that uses the action with various inputs. The JavaScript tests in `__tests__/`
+are retained from the previous implementation.
 
 ## General Coding Guidelines
 
-- Follow standard JavaScript coding conventions and best practices
-- Changes should maintain consistency with existing patterns and style
-- Document changes clearly and thoroughly, including updates to existing
-  comments when appropriate
-- Do not include basic, unnecessary comments that simply restate what the code
-  is doing (focus on explaining _why_, not _what_)
-- Use consistent error handling patterns throughout the codebase
-- Keep functions focused and manageable
-- Use descriptive variable and function names that clearly convey their purpose
-- Use JSDoc comments to document functions, classes, and complex logic
-- After doing any refactoring, ensure to run `npm run test` to ensure that all
-  tests still pass and coverage requirements are met
-- When suggesting code changes, always opt for the most maintainable approach.
-  Try your best to keep the code clean and follow "Don't Repeat Yourself" (DRY)
-  principles
+- Follow standard shell scripting best practices
+- Use proper error handling with `set -e` and error checking
+- Document changes clearly and thoroughly
+- Use descriptive variable names in UPPERCASE for environment variables
+- Validate all inputs before use
+- Use GitHub Actions logging commands (`::error::`, `::warning::`, `::debug::`)
+  for consistent output
+- Keep scripts readable and maintainable
+- Use comments to explain complex logic, not obvious operations
+- Test changes in a workflow before committing
+- Use `jq` for robust JSON parsing
+- Quote variables properly to prevent word splitting and globbing
 - Avoid unnecessary complexity and always consider the long-term maintainability
   of the code
-- When writing unit tests, try to consider edge cases as well as the main path
-  of success. This will help ensure that the code is robust and can handle
-  unexpected inputs or situations
-- Use the `@actions/core` package for logging over `console` to ensure
-  compatibility with GitHub Actions logging features
 
 ### Versioning
 
@@ -105,9 +86,6 @@ When creating a pull request (PR), please ensure that:
   them into separate, smaller PRs)
 - Formatting checks pass
 - Linting checks pass
-- Unit tests pass and coverage requirements are met
-- The action has been transpiled to JavaScript and the `dist` directory is
-  up-to-date with the latest changes in the `src` directory
 - If necessary, the `README.md` file is updated to reflect any changes in
   functionality or usage
 

@@ -1,10 +1,16 @@
 # Build discussion action
 
-This action creates a GitHub discussion.
+This action creates a GitHub discussion using the GitHub CLI.
 
 It's inspired by the
 [Create GitHub discussion action](https://github.com/marketplace/actions/create-github-discussion),
 by @abirismyname.
+
+## Implementation
+
+This is a **composite action** that uses the GitHub CLI (`gh`) to interact with
+the GitHub GraphQL API. It requires no bundling or JavaScript dependencies,
+making it simple to maintain and contribute to.
 
 ## Inputs
 
