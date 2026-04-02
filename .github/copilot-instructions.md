@@ -1,61 +1,60 @@
 # Copilot Instructions
 
 This GitHub Action is a **composite action** that uses the GitHub CLI (`gh`) to
-interact with the GitHub GraphQL API. The action logic is contained entirely in
-the `action.yml` file as shell scripts, requiring no JavaScript bundling or
-compilation steps.
+interact with the GitHub GraphQL API. The action consists of:
+
+- `action.yml`: Composite action metadata and step configuration
+- `scripts/create-discussion.sh`: Shell script containing the implementation
+  logic
+
+This design requires no JavaScript bundling or compilation steps.
 
 ## Version History
 
 The repository has been migrated from a JavaScript/Node.js implementation (v1)
-to a GitHub CLI composite action (v2). Legacy files from the JavaScript version
-are retained for reference but are not used in the current implementation.
+to a GitHub CLI composite action (v2). All legacy files from the JavaScript
+version have been removed.
 
 ## Repository Structure
 
-| Path                 | Description                                        |
-| -------------------- | -------------------------------------------------- |
-| `__fixtures__/`      | Unit Test Fixtures (from JavaScript version)      |
-| `__tests__/`         | Unit Tests (from JavaScript version)              |
-| `.devcontainer/`     | Development Container Configuration                |
-| `.github/`           | GitHub Configuration                               |
-| `.licenses/`         | License Information                                |
-| `.vscode/`           | Visual Studio Code Configuration                   |
-| `badges/`            | Badges for readme                                  |
-| `dist/`              | Generated JavaScript Code (from JavaScript version)|
-| `src/`               | JavaScript Source Code (from JavaScript version)   |
-| `.env.example`       | Environment Variables Example                      |
-| `.licensed.yml`      | Licensed Configuration                             |
-| `.markdown-lint.yml` | Markdown Linter Configuration                      |
-| `.node-version`      | Node.js Version Configuration                      |
-| `.prettierrc.yml`    | Prettier Formatter Configuration                   |
-| `.yaml-lint.yml`     | YAML Linter Configuration                          |
-| `action.yml`         | GitHub Action Metadata and Implementation          |
-| `CODEOWNERS`         | Code Owners File                                   |
-| `eslint.config.mjs`  | ESLint Configuration (from JavaScript version)     |
-| `jest.config.js`     | Jest Configuration (from JavaScript version)       |
-| `LICENSE`            | License File                                       |
-| `package.json`       | NPM Package Configuration (from JavaScript version)|
-| `README.md`          | Project Documentation                              |
-| `rollup.config.js`   | Rollup Bundler Configuration (from JavaScript version)|
-
-**Note:** Files marked "from JavaScript version" are retained for reference but
-are not used in the composite action implementation.
+| Path                     | Description                              |
+| ------------------------ | ---------------------------------------- |
+| `.github/`               | GitHub configuration and workflows       |
+| `scripts/`               | Shell scripts for action implementation  |
+| `.gitattributes`         | Git attributes configuration             |
+| `.gitignore`             | Git ignore patterns                      |
+| `.markdown-lint.yml`     | Markdown linter configuration            |
+| `.pre-commit-config.yaml`| Pre-commit hooks configuration           |
+| `.yaml-lint.yml`         | YAML linter configuration                |
+| `action.yml`             | GitHub Action metadata                   |
+| `actionlint.yml`         | GitHub Actions linter configuration      |
+| `LICENSE`                | License file                             |
+| `README.md`              | Project documentation                    |
 
 ## Development
 
-Since this is a composite action using shell scripts, development is
-straightforward:
+The action implementation is split between two files:
 
-1. Edit the `action.yml` file directly
-1. Test the action in a workflow
-1. No bundling or compilation required
+1. **action.yml**: Defines the composite action metadata, inputs, outputs, and
+   steps
+2. **scripts/create-discussion.sh**: Contains the shell script logic for
+   creating discussions
+
+When developing:
+
+1. Edit `action.yml` to modify inputs, outputs, or step configuration
+2. Edit `scripts/create-discussion.sh` to modify the implementation logic
+3. Test the action in a workflow (see Testing section)
+4. No bundling or compilation required
 
 ## Testing
 
-For testing the composite action, create a test workflow in `.github/workflows/`
-that uses the action with various inputs. The JavaScript tests in `__tests__/`
-are retained from the previous implementation.
+For testing the composite action:
+
+1. Create or use an existing test workflow in `.github/workflows/`
+2. Use the action with various inputs to verify functionality
+3. Check workflow run logs for proper output and error handling
+4. Verify the action works with different repositories and categories
 
 ## General Coding Guidelines
 
@@ -79,9 +78,6 @@ are retained from the previous implementation.
 GitHub Actions are versioned using Git tags. Version 2.x represents the current
 composite action implementation. All versions should follow
 [Semantic Versioning](https://semver.org/) principles.
-
-Note: The `package.json` file is a legacy artifact from v1 and is no longer
-used in the composite action implementation.
 
 ## Pull Request Guidelines
 
