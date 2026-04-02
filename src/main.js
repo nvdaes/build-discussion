@@ -1,8 +1,6 @@
-const core = require('@actions/core')
-const github = require('@actions/github')
-const {
-  getRepositoryAndCategoryId
-} = require('./get-repository-and-category-id')
+import * as core from '@actions/core'
+import * as github from '@actions/github'
+import { getRepositoryAndCategoryId } from './get-repository-and-category-id.js'
 
 /**
  * The main function for the action.
@@ -12,8 +10,17 @@ async function run() {
   const resultWithRepoAndCatId = await getRepositoryAndCategoryId()
   const repoId = resultWithRepoAndCatId.repository.id
   const catIndex = parseInt(core.getInput('category-position'), 10) - 1
-  const catId =
-    resultWithRepoAndCatId.repository.discussionCategories.nodes[catIndex].id
+
+  // Validate array bounds
+  const categories =
+    resultWithRepoAndCatId.repository.discussionCategories.nodes
+  if (catIndex < 0 || catIndex >= categories.length) {
+    throw new Error(
+      `Category position ${catIndex + 1} is out of bounds. Available categories: ${categories.length}`
+    )
+  }
+
+  const catId = categories[catIndex].id
   const body = core.getInput('body')
   const title = core.getInput('title')
   const token = core.getInput('token')
@@ -44,14 +51,12 @@ async function run() {
     repoId,
     catId
   })
-  const discussionId = await response.createDiscussion.discussion.id
-  const discussionUrl = await response.createDiscussion.discussion.url
-  const discussionNumber = await response.createDiscussion.discussion.number
+  const discussionId = response.createDiscussion.discussion.id
+  const discussionUrl = response.createDiscussion.discussion.url
+  const discussionNumber = response.createDiscussion.discussion.number
   core.setOutput('discussion-id', discussionId)
   core.setOutput('discussion-url', discussionUrl)
   core.setOutput('discussion-number', discussionNumber)
 }
 
-module.exports = {
-  run
-}
+export { run }
