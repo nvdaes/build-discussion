@@ -32,11 +32,24 @@ inputs:
 outputs:
   discussion-id:
     description: 'ID of the created discussion'
+    value: ${{ steps.create-discussion.outputs.discussion-id }}
   discussion-url:
     description: 'URL of the created discussion'
+    value: ${{ steps.create-discussion.outputs.discussion-url }}
   discussion-number:
     description: 'Number of the created discussion'
+    value: ${{ steps.create-discussion.outputs.discussion-number }}
 
 runs:
-  using: node24
-  main: dist/index.js
+  using: composite
+  steps:
+    - name: Create GitHub Discussion
+      id: create-discussion
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        REPOSITORY: ${{ inputs.repository }}
+        CATEGORY_POSITION: ${{ inputs.category-position }}
+        TITLE: ${{ inputs.title }}
+        BODY: ${{ inputs.body }}
+      run: ${{ github.action_path }}/scripts/create-discussion.sh

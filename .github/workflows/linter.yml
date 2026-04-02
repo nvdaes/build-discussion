@@ -1,8 +1,4 @@
-# This workflow will lint the entire codebase using the
-# `super-linter/super-linter` action.
-#
-# For more information, see the super-linter repository:
-#     https://github.com/super-linter/super-linter
+# This workflow lints the codebase using individual linters
 name: Lint Codebase
 
 on:
@@ -15,46 +11,53 @@ on:
 
 permissions:
   contents: read
-  packages: read
-  statuses: write
 
 jobs:
-  lint:
-    name: Lint Codebase
+  yamllint:
+    name: YAML Lint
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
-        id: checkout
         uses: actions/checkout@v6
+
+      - name: Run yamllint
+        run: |
+          pip install yamllint
+          yamllint -c .yaml-lint.yml .
+
+  markdownlint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run markdownlint
+        uses: nosborn/github-action-markdown-cli@v3.3.0
         with:
-          fetch-depth: 0
+          files: .
+          config_file: .markdown-lint.yml
 
-      - name: Setup Node.js
-        id: setup-node
-        uses: actions/setup-node@v6
+  shellcheck:
+    name: Shell Script Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run shellcheck
+        uses: ludeeus/action-shellcheck@00b27aa7cb85167568cb48a3838b75f4265f2bca # master
         with:
-          node-version-file: .node-version
-          cache: npm
+          scandir: './scripts'
 
-      - name: Install Dependencies
-        id: install
-        run: npm ci
+  actionlint:
+    name: GitHub Actions Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - name: Lint Codebase
-        id: super-linter
-        uses: super-linter/super-linter/slim@v8
-        env:
-          CHECKOV_FILE_NAME: .checkov.yml
-          DEFAULT_BRANCH: main
-          FILTER_REGEX_EXCLUDE: dist/**/*
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINTER_RULES_PATH: .
-          VALIDATE_ALL_CODEBASE: true
-          VALIDATE_BIOME_FORMAT: false
-          VALIDATE_BIOME_LINT: false
-          VALIDATE_GITHUB_ACTIONS_ZIZMOR: false
-          VALIDATE_JAVASCRIPT_ES: false
-          VALIDATE_JSCPD: false
-          VALIDATE_TYPESCRIPT_ES: false
-          VALIDATE_JSON: false
+      - name: Run actionlint
+        uses: raven-actions/actionlint@v2
+        with:
+          fail-on-error: true
